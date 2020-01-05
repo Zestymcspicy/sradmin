@@ -1,6 +1,8 @@
 var db = firebase.firestore()
 let posts;
 let quill;
+
+
 function initializeEditor() {
     let journalId;
     quill = new Quill("#editor", {
@@ -18,8 +20,8 @@ function initializeEditor() {
     });
   }
 
-  function addNewBlogEntry() {
-    let contents = quill.getContents();
+function addNewBlogEntry() {
+  let contents = quill.getContents();
     // const journalId=Date.now();
     // let entry = {
     //   _id: journalId,
@@ -45,6 +47,10 @@ if(location.href.indexOf("index")!==-1){
   let sendButton = document.querySelector("#sendButton")
   sendButton.addEventListener("click", e => addNewBlogEntry())
 })()
+}
+
+if(location.href.indexOf('frontPrev'!==-1)){
+  loadBlogPost();
 }
 
 if(document.getElementById('previewText')){
@@ -154,22 +160,31 @@ function deletePost(id) {
 function getParentId(button){
   return button.parentElement.dataset.docid;
 }
-// if(document.location.href.indexOf('smokescorner.html')!==-1){
-//   var db = firebase.firestore()
-//
-//   // let featuredTitle = document.getElementById('featuredTitle');
-//   let featuredText = document.getElementById('featuredText');
-//   db.collection('quillPosts').get().then((querySnapshot) => {
-//     querySnapshot.forEach((doc) => {
-//         let data = (doc.data());
-//         data = data.entry;
-//         // let entry = JSON.parse(data)
-//         const entry = JSON.parse(data);
-//         console.log(entry);
-//         const quillText = new Quill(document.createElement('div'));
-//         quillText.setContents(entry);
-//         featuredText.insertAdjacentHTML('afterBegin',`${quillText.root.innerHTML}`);
-//     });
-// });
-//   console.log('welcome to smokescorner');
-// }
+
+function loadBlogPost(){
+  db.collection('quillPosts').get().then((querySnapshot) => {
+
+    querySnapshot.forEach((doc) => {
+        let data = (doc.data());
+        let textData = data.entry;
+        let frontPageBlogArea = document.createRange().createContextualFragment(`<div>
+          <h2 class="pt-3 text-center">A word from the creator.....</h2>
+          <div class="row marketing">
+            <div class="col-md-11 px-0 ml-md-5 mr-md-2">
+            <p class="px-md-4 pl-md-4" id="featuredText"></p>
+            </div>
+          </div>
+          </div>`)
+        if(data.frontPage){
+          let featuredText = frontPageBlogArea.getElementById('featuredText');
+          document.getElementById('featuredPostHook').appendChild(frontPageBlogArea)
+        // let entry = JSON.parse(data)
+          const entry = JSON.parse(textData);
+          console.log(entry);
+          const quillText = new Quill(document.createElement('div'));
+          quillText.setContents(entry);
+          featuredText.insertAdjacentHTML('afterBegin',`${quillText.root.innerHTML}`);
+      }
+    });
+  });
+}
