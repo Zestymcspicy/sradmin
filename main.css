@@ -1,3 +1,13 @@
 #editor{
   height: 400px;
 }
+
+#dialogBox{
+  position: fixed;
+  top: 30%;
+  left: 50%;
+}
+
+.hidden{
+  display: none;
+}
