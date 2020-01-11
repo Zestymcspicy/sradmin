@@ -25,7 +25,9 @@
       <h1>Blog Admin</h1>
     </div>
     <div class="col-6">
-      <a href="frontPreview.html">Preview</a>
+      <a href="frontPreview.html">
+        <button class="btn btn-primary mt-2">Preview Front Page</button>
+      </a>
     </div>
   </div>
 <!-- Modal -->
@@ -49,9 +51,10 @@
 </div>
   </div>
   <div id="editor"></div>
-  <button id="sendButton">Send</button>
-  <button id="noFrontPost">Set No Front Post</button>
+  <button id="saveButton" class="btn btn-secondary">Save</button>
+  <button id="noFrontPost" class="btn btn-secondary">Set No Front Post</button>
   <div id="previewText"></div>
+  <script src="user-agent.js"></script>
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.5.2/firebase-firestore.js"></script>

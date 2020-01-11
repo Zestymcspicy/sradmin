@@ -1,7 +1,11 @@
 var db = firebase.firestore()
 let posts;
 let quill;
+let postToEdit;
 
+if (userAgent.isIos()) {
+    document.querySelector('html').classList.add('is-ios');
+}
 
 function initializeEditor() {
     let journalId;
@@ -9,12 +13,10 @@ function initializeEditor() {
       theme: "snow",
       modules: {
         toolbar: [
-          [{
-            // size: ["normal"],
-            header: [1, 2, 3],
-          }],
+          [{ header: [1, 2, 3, false] }],
           ["bold", "italic", "underline"],
-          ["image"]
+          [ { 'align':[] }]
+          // ["image"]
         ]
       }
     });
@@ -41,15 +43,14 @@ function addNewBlogEntry() {
     });
     resetPreviewText();
   }
-if(location.href.indexOf("index")!==-1){
-(() => {
-  initializeEditor()
-  let sendButton = document.querySelector("#sendButton")
-  sendButton.addEventListener("click", e => addNewBlogEntry())
-})()
+if(document.querySelector('#editor')){
+    initializeEditor()
+    let saveButton = document.querySelector("#saveButton")
+    document.querySelector('#noFrontPost').addEventListener('click', setNoFrontPost)
+    saveButton.addEventListener("click", addNewBlogEntry, true)
 }
 
-if(location.href.indexOf('frontPrev'!==-1)){
+if(document.getElementById('featuredPostHook')){
   loadBlogPost();
 }
 
@@ -70,16 +71,21 @@ function resetPreviewText() {
         console.log(doc.id)
         data.id = doc.id
         let text = data.entry;
+        let isFrontPage = data.frontPage?"Front Page":"";
+        let publishedBtnText = data.published?"Un-publish":"Publish";
+        let published = data.published?"Published":"Unpublished";
         posts.push(data)
         // let entry = JSON.parse(data)
         const entry = JSON.parse(text);
         const quillText = new Quill(document.createElement('div'));
         quillText.setContents(entry);
         previewText.insertAdjacentHTML('afterBegin',`<div class='border m-4'>
+        <span class="border border-success">${published} ${isFrontPage}</span>
         <div>${quillText.root.innerHTML}</div>
         <div class="btn-group" data-docId="${doc.id}">
           <button class="setFrontButton btn btn-primary m-2">Set Front Page</button>
           <button class="editButton btn btn-success m-2">Edit</button>
+          <button class="publishButton btn btn-warning m-2">${publishedBtnText}</button>
           <button class="deleteButton btn btn-danger m-2"
           data-toggle="modal" data-target="#exampleModal">Delete</button>
         </div>
@@ -105,6 +111,13 @@ function addButtonListeners() {
       editPost(docid);
     });
   })
+  document.querySelectorAll(".publishButton").forEach(button => {
+    let docid = getParentId(button)
+    button.addEventListener('click', e => {
+      e.preventDefault();
+      togglePublish(docid)
+    });
+  })
   document.querySelectorAll(".deleteButton").forEach(button => {
     let docid = getParentId(button)
     button.addEventListener("click", e => {
@@ -112,6 +125,24 @@ function addButtonListeners() {
       deletePost(docid);
     });
   })
+}
+
+function togglePublish(id) {
+  let published = posts.filter(post => post.id===id)[0].published
+  let newState = published ? false : true;
+  let updateRef = db.collection("quillPosts").doc(`${id}`)
+  return updateRef.update({
+    published: newState
+  })
+  .then(function() {
+    console.log("Document successfully updated!");
+    resetPreviewText();
+  })
+  .catch(function(error) {
+    // The document probably doesn't exist.
+    console.error("Error updating document: ", error);
+  });
+
 }
 
 function setFrontPageText(id) {
@@ -132,8 +163,53 @@ function setFrontPageText(id) {
   resetPreviewText();
 }
 
+function setNoFrontPost() {
+  let oldFrontPageText= posts.filter(x => x.frontPage===true)[0];
+  let updateRef = db.collection("quillPosts").doc(`${oldFrontPageText.id}`)
+  return updateRef.update({
+    frontPage: false
+  })
+  .then(function() {
+    console.log("Document successfully updated!");
+    resetPreviewText();
+  })
+  .catch(function(error) {
+    // The document probably doesn't exist.
+    console.error("Error updating document: ", error);
+  });
+}
+
 function editPost(id) {
-  console.log(posts.filter(post => post.id===id))
+  window.scrollTo(0,0);
+  postToEdit = posts.filter(x=>x.id===id)[0]
+  let postContent = JSON.parse(postToEdit.entry)
+  console.log(postToEdit);
+  quill.setContents(postContent);
+
+  saveButton.removeEventListener("click", addNewBlogEntry, true);
+  saveButton.addEventListener("click", updatePost, true);
+
+  // console.log(posts.filter(post => post.id===id))
+}
+
+function updatePost() {
+  postToEdit.entry=JSON.stringify(quill.getContents())
+  console.log(postToEdit)
+  let updateRef = db.collection("quillPosts").doc(`${postToEdit.id}`)
+  return updateRef.update({
+    entry: postToEdit.entry
+  })
+  .then(function() {
+    console.log("Document successfully updated!");
+    saveButton.addEventListener("click", addNewBlogEntry, true);
+    resetPreviewText();
+    quill.setContents('');
+  })
+  .catch(function(error) {
+    // The document probably doesn't exist.
+    console.error("Error updating document: ", error);
+  });
+
 }
 
 function deletePost(id) {
@@ -163,7 +239,6 @@ function getParentId(button){
 
 function loadBlogPost(){
   db.collection('quillPosts').get().then((querySnapshot) => {
-
     querySnapshot.forEach((doc) => {
         let data = (doc.data());
         let textData = data.entry;
@@ -175,12 +250,12 @@ function loadBlogPost(){
             </div>
           </div>
           </div>`)
-        if(data.frontPage){
+        if(data.frontPage===true){
           let featuredText = frontPageBlogArea.getElementById('featuredText');
           document.getElementById('featuredPostHook').appendChild(frontPageBlogArea)
         // let entry = JSON.parse(data)
           const entry = JSON.parse(textData);
-          console.log(entry);
+          console.log(data);
           const quillText = new Quill(document.createElement('div'));
           quillText.setContents(entry);
           featuredText.insertAdjacentHTML('afterBegin',`${quillText.root.innerHTML}`);
