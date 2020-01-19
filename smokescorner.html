@@ -1,6 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="">
-
+<html lang="">
 <head>
   <meta charset="utf-8">
   <meta name="description" content="">
@@ -8,17 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>SkyRoots</title>
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <!-- Place favicon.ico in the root directory -->
-  <!-- build:css styles/vendor.css -->
+  <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
-  <!-- endbuild -->
-  <!-- build:css styles/main.css -->
   <link rel="stylesheet" href="main.css">
-  <!-- endbuild -->
-  <!-- build:js scripts/modernizr.js -->
-  <!-- <script src="scripts/modernizr.js"></script> -->
+  <script src="modernizr.js"></script>
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-  <!-- endbuild -->
 </head>
 
 <body>
@@ -27,11 +20,12 @@
     <![endif]-->
   <div>
   <div class="header">
+    <div id="firebaseui-auth-container"></div>
+    <div id="loader">Loading...</div>
     <nav class="navbar fixed-top navbar-expand-lg">
       <h3 class="ml-4">SkyRoots</h3>
-
             <a href="index.html" class="nav-link">Home</a>
-      
+
     </nav>
   </div>
   <div class="container">
@@ -70,36 +64,37 @@
 
   </div>
   <!-- build:js scripts/vendor.js -->
-  <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
-  <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-  <!-- endbuild -->
-  <!-- build:js scripts/main.js -->
-  <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-app.js"></script>
+  <script src="user-agent.js"></script>
+  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+  <!-- <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-app.js"></script> -->
+
+  <!-- <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-auth.js"></script> -->
+  <!-- <script src="https://www.gstatic.com/firebasejs/7.5.2/firebase-firestore.js"></script> -->
 
 <!-- TODO: Add SDKs for Firebase products that you want to use
      https://firebase.google.com/docs/web/setup#available-libraries -->
-<script src="https://www.gstatic.com/firebasejs/7.5.2/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-analytics.js"></script>
+  <!-- <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-analytics.js"></script> -->
 
-<script>
-  // Your web app's Firebase configuration
-  var firebaseConfig = {
-    apiKey: "AIzaSyDMyzl-We3InHlSBJKrk13Z7Ch3natAcps",
-    authDomain: "fir-cdn-4d175.firebaseapp.com",
-    databaseURL: "https://fir-cdn-4d175.firebaseio.com",
-    projectId: "fir-cdn-4d175",
-    storageBucket: "fir-cdn-4d175.appspot.com",
-    messagingSenderId: "300822015416",
-    appId: "1:300822015416:web:c08a392dd64ff9c799b34d",
-    measurementId: "G-8WBQV39CRB"
-  };
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  firebase.analytics();
-</script>
-<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-  <script src="adminindex.js"></script>
-  <!-- endbuild -->
+  <!-- <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script> -->
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyDMyzl-We3InHlSBJKrk13Z7Ch3natAcps",
+      authDomain: "fir-cdn-4d175.firebaseapp.com",
+      databaseURL: "https://fir-cdn-4d175.firebaseio.com",
+      projectId: "fir-cdn-4d175",
+      storageBucket: "fir-cdn-4d175.appspot.com",
+      messagingSenderId: "300822015416",
+      appId: "1:300822015416:web:c08a392dd64ff9c799b34d",
+      measurementId: "G-8WBQV39CRB"
+    };
+    // Initialize Firebase
+    // firebase.initializeApp(firebaseConfig);
+    // firebase.analytics();
+  </script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="smokescorner.js"></script>
   </body>
-
-  </html>
+</html>

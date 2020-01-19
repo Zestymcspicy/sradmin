@@ -12,7 +12,8 @@ function serve() {
 
   gulp.watch([
     '*.html',
-    '*.js'
+    '*.js',
+    '*.css'
   ]).on('change', server.reload);
 }
 

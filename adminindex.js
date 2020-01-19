@@ -1,4 +1,8 @@
 var db = firebase.firestore()
+// var ui;
+// if (document.location.href.indexOf('index')!==-1){
+var ui = new firebaseui.auth.AuthUI(firebase.auth());
+// }
 let posts;
 let quill;
 let postToEdit;
@@ -6,6 +10,74 @@ let postToEdit;
 if (userAgent.isIos()) {
     document.querySelector('html').classList.add('is-ios');
 }
+
+// var user = firebase.auth().currentUser;
+
+// if (user) {
+//   console.log(user)// User is signed in.
+// } else {
+//   document.location.href = "localhost:3000/index.html"
+//   // No user is signed in.
+// }
+
+var uiConfig = {
+  callbacks: {
+    signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+      // User successfully signed in.
+      // Return type determines whether we continue the redirect automatically
+      // or whether we leave that to developer to handle.
+      initializeEditor()
+      // var user = firebase.auth().currentUser;
+
+      // document.cookie =`user=${JSON.stringify(user)}; max-age=${6*3600}`;
+      return false;
+    },
+    uiShown: function() {
+      // The widget is rendered.
+      // Hide the loader.
+      document.getElementById('loader').style.display = 'none';
+    }
+  },
+  signInSuccessUrl: `${document.location.href}`,
+  // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
+  signInFlow: 'popup',
+  signInOptions: [firebase.auth.EmailAuthProvider.PROVIDER_ID]
+}
+
+ui.start('#firebaseui-auth-container', uiConfig)
+
+
+if (document.location.href.indexOf('smokescorner')!==-1){
+  // var ui = new firebaseui.auth.AuthUI(firebase.auth());
+  // ui.start('#firebaseui-auth-container', uiConfig)
+
+}
+
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    // User is signed in.
+    var displayName = user.displayName;
+    var email = user.email;
+    var emailVerified = user.emailVerified;
+    var photoURL = user.photoURL;
+    var isAnonymous = user.isAnonymous;
+    var uid = user.uid;
+    var providerData = user.providerData;
+    console.log(user)
+    window.location.href = 'localhost:3000/index.html'
+    // ...
+  } else {
+    // User is signed out.
+    // ...
+  }
+});
+
+// firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+//   // Handle Errors here.
+//   var errorCode = error.code;
+//   var errorMessage = error.message;
+//   // ...
+// });
 
 function initializeEditor() {
     let journalId;
@@ -44,7 +116,7 @@ function addNewBlogEntry() {
     resetPreviewText();
   }
 if(document.querySelector('#editor')){
-    initializeEditor()
+    // initializeEditor()
     let saveButton = document.querySelector("#saveButton")
     document.querySelector('#noFrontPost').addEventListener('click', setNoFrontPost)
     saveButton.addEventListener("click", addNewBlogEntry, true)
