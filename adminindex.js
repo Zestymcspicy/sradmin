@@ -44,7 +44,10 @@ var uiConfig = {
   signInOptions: [firebase.auth.EmailAuthProvider.PROVIDER_ID]
 }
 
-ui.start('#firebaseui-auth-container', uiConfig)
+
+if(!firebase.auth().currentUser){
+  ui.start('#firebaseui-auth-container', uiConfig)
+}
 
 
 if (document.location.href.indexOf('smokescorner')!==-1){
