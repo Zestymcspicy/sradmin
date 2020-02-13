@@ -11,14 +11,15 @@ if (userAgent.isIos()) {
     document.querySelector('html').classList.add('is-ios');
 }
 
-// var user = firebase.auth().currentUser;
+var user = firebase.auth().currentUser;
 
-// if (user) {
-//   console.log(user)// User is signed in.
-// } else {
-//   document.location.href = "localhost:3000/index.html"
-//   // No user is signed in.
-// }
+if (user) {
+  console.log(user)// User is signed in.
+  resetPreviewText()
+} else {
+  document.location.href = "localhost:3000/index.html"
+  // No user is signed in.
+}
 
 var uiConfig = {
   callbacks: {
@@ -26,10 +27,10 @@ var uiConfig = {
       // User successfully signed in.
       // Return type determines whether we continue the redirect automatically
       // or whether we leave that to developer to handle.
-      initializeEditor()
-      // var user = firebase.auth().currentUser;
+      if(document.getElementById('previewText')){
+        resetPreviewText();
+      }
 
-      // document.cookie =`user=${JSON.stringify(user)}; max-age=${6*3600}`;
       return false;
     },
     uiShown: function() {
@@ -42,11 +43,6 @@ var uiConfig = {
   // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
   signInFlow: 'popup',
   signInOptions: [firebase.auth.EmailAuthProvider.PROVIDER_ID]
-}
-
-
-if(!firebase.auth().currentUser){
-  ui.start('#firebaseui-auth-container', uiConfig)
 }
 
 
@@ -66,15 +62,31 @@ firebase.auth().onAuthStateChanged(function(user) {
     var isAnonymous = user.isAnonymous;
     var uid = user.uid;
     var providerData = user.providerData;
+    if(document.getElementById('editor')){
+      initializeEditor();
+      resetPreviewText()
+    }
+    document.getElementById('loader').style.display = 'none';
     console.log(user)
-    window.location.href = 'localhost:3000/index.html'
-    // ...
+    getUserData(user)
   } else {
     // User is signed out.
-    // ...
+    ui.start('#firebaseui-auth-container', uiConfig);
   }
 });
 
+const getUserData = user => {
+  db.collection("users").doc(user.uid).get().then(doc => {
+    if(doc.exists){
+      console.log(doc.data());
+    } else {
+      db.collection("users").doc(`${user.uid}`).set({
+        name: user.displayName,
+        uid: user.uid
+      })
+    }
+  })
+}
 // firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
 //   // Handle Errors here.
 //   var errorCode = error.code;
@@ -83,6 +95,9 @@ firebase.auth().onAuthStateChanged(function(user) {
 // });
 
 function initializeEditor() {
+    // while (document.getElementById('editor').firstChild){
+      // document.getElementById('editor').removeChild();
+    // }
     let journalId;
     quill = new Quill("#editor", {
       theme: "snow",
@@ -95,7 +110,7 @@ function initializeEditor() {
         ]
       }
     });
-  }
+}
 
 function addNewBlogEntry() {
   let contents = quill.getContents();
@@ -120,21 +135,23 @@ function addNewBlogEntry() {
   }
 if(document.querySelector('#editor')){
     // initializeEditor()
-    let saveButton = document.querySelector("#saveButton")
-    document.querySelector('#noFrontPost').addEventListener('click', setNoFrontPost)
-    saveButton.addEventListener("click", addNewBlogEntry, true)
+    // let saveButton = document.querySelector("#saveButton")
+    // document.querySelector('#noFrontPost').addEventListener('click', setNoFrontPost)
+    // saveButton.addEventListener("click", addNewBlogEntry, true)
 }
 
 if(document.getElementById('featuredPostHook')){
   loadBlogPost();
 }
 
-if(document.getElementById('previewText')){
-  resetPreviewText();
+if(document.getElementById('logoutButton')){
+  document.getElementById('logoutButton').addEventListener('click', () => {
+    firebase.auth().signOut().then(res=> console.log(res))
+    .catch(err=> console.log(err));
+  })
 }
 
 function resetPreviewText() {
-
   let previewText = document.getElementById('previewText');
   while (previewText.firstChild) {
     previewText.removeChild(previewText.firstChild);
@@ -143,7 +160,6 @@ function resetPreviewText() {
   db.collection('quillPosts').get().then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
         let data = (doc.data());
-        console.log(doc.id)
         data.id = doc.id
         let text = data.entry;
         let isFrontPage = data.frontPage?"Front Page":"";
@@ -171,7 +187,9 @@ function resetPreviewText() {
 }
 
 function addButtonListeners() {
-  console.log("listeners")
+  let saveButton = document.querySelector("#saveButton")
+  document.querySelector('#noFrontPost').addEventListener('click', setNoFrontPost)
+  saveButton.addEventListener("click", addNewBlogEntry, true)
   document.querySelectorAll(".setFrontButton").forEach(button => {
     let docid = getParentId(button)
     button.addEventListener("click", e => {
