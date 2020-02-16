@@ -87,17 +87,10 @@ const getUserData = user => {
     }
   })
 }
-// firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
-//   // Handle Errors here.
-//   var errorCode = error.code;
-//   var errorMessage = error.message;
-//   // ...
-// });
+
 
 function initializeEditor() {
-    // while (document.getElementById('editor').firstChild){
-      // document.getElementById('editor').removeChild();
-    // }
+
     let journalId;
     quill = new Quill("#editor", {
       theme: "snow",
@@ -172,9 +165,10 @@ function resetPreviewText() {
         quillText.setContents(entry);
         previewText.insertAdjacentHTML('afterBegin',`<div class='border m-4'>
         <span class="border border-success">${published} ${isFrontPage}</span>
-        <div>${quillText.root.innerHTML}</div>
+        <div class="ql-editor">${quillText.root.innerHTML}</div>
         <div class="btn-group" data-docId="${doc.id}">
           <button class="setFrontButton btn btn-primary m-2">Set Front Page</button>
+
           <button class="editButton btn btn-success m-2">Edit</button>
           <button class="publishButton btn btn-warning m-2">${publishedBtnText}</button>
           <button class="deleteButton btn btn-danger m-2"
@@ -185,7 +179,7 @@ function resetPreviewText() {
     addButtonListeners()
   });
 }
-
+// <button class="preview btn btn-primary m-2">Preview</button>
 function addButtonListeners() {
   let saveButton = document.querySelector("#saveButton")
   document.querySelector('#noFrontPost').addEventListener('click', setNoFrontPost)
@@ -339,7 +333,7 @@ function loadBlogPost(){
           <h2 class="pt-3 text-center">A word from the creator.....</h2>
           <div class="row marketing">
             <div class="col-md-11 px-0 ml-md-5 mr-md-2">
-            <p class="px-md-4 pl-md-4" id="featuredText"></p>
+            <p class="px-md-4 pl-md-4 ql-editor" id="featuredText"></p>
             </div>
           </div>
           </div>`)
