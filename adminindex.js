@@ -157,7 +157,8 @@ function resetPreviewText() {
         let text = data.entry;
         let isFrontPage = data.frontPage?"Front Page":"";
         let publishedBtnText = data.published?"Un-publish":"Publish";
-        let published = data.published?"Published":"Unpublished";
+        let previewBtnText = data.preview?"Un-preview":"Preview";
+        let published = data.published?"Published": data.preview? "Preview":"None";
         posts.push(data)
         // let entry = JSON.parse(data)
         const entry = JSON.parse(text);
@@ -166,9 +167,9 @@ function resetPreviewText() {
         previewText.insertAdjacentHTML('afterBegin',`<div class='border m-4'>
         <span class="border border-success">${published} ${isFrontPage}</span>
         <div class="ql-editor">${quillText.root.innerHTML}</div>
-        <div class="btn-group" data-docId="${doc.id}">
+        <div class="border" data-docId="${doc.id}">
           <button class="setFrontButton btn btn-primary m-2">Set Front Page</button>
-
+          <button class="previewButton btn btn-primary m-2">${previewBtnText}</button>
           <button class="editButton btn btn-success m-2">Edit</button>
           <button class="publishButton btn btn-warning m-2">${publishedBtnText}</button>
           <button class="deleteButton btn btn-danger m-2"
@@ -179,7 +180,7 @@ function resetPreviewText() {
     addButtonListeners()
   });
 }
-// <button class="preview btn btn-primary m-2">Preview</button>
+
 function addButtonListeners() {
   let saveButton = document.querySelector("#saveButton")
   document.querySelector('#noFrontPost').addEventListener('click', setNoFrontPost)
@@ -212,6 +213,32 @@ function addButtonListeners() {
       deletePost(docid);
     });
   })
+  document.querySelectorAll(".previewButton").forEach(button => {
+    let docid = getParentId(button)
+    button.addEventListener("click", e => {
+      e.preventDefault();
+      togglePreview(docid);
+    });
+  })
+}
+
+function togglePreview(id){
+  console.log(id)
+  let preview = posts.filter(post => post.id===id)[0].preview;
+  let newState = preview ? false : true;
+  let updateRef = db.collection("quillPosts").doc(`${id}`)
+  return updateRef.update({
+    preview: newState
+  })
+  .then(function() {
+    console.log("Document successfully updated!");
+    resetPreviewText();
+  })
+  .catch(function(error) {
+    // The document probably doesn't exist.
+    console.error("Error updating document: ", error);
+  });
+
 }
 
 function togglePublish(id) {
