@@ -364,7 +364,7 @@ function loadBlogPost(){
             </div>
           </div>
           </div>`)
-        if(data.frontPage===true){
+        if(data.frontPage===true && (data.preview===true || data.published === true)){
           let featuredText = frontPageBlogArea.getElementById('featuredText');
           document.getElementById('featuredPostHook').appendChild(frontPageBlogArea)
         // let entry = JSON.parse(data)

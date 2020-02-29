@@ -11,6 +11,25 @@ body {
     padding-bottom: 1.5rem
 }
 
+#jumboBackground{
+  color: #e5ebee;
+  background-image: url('../images/moon.jpg');
+  background-size: cover;
+  width:100%;
+  height: auto;
+  box-shadow: 0px 4px 4px #32230d;
+}
+
+#imageAtt{
+background-color:black;color:white;text-decoration:none;padding:4px 6px;
+font-family:-apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, Ubuntu, Roboto, Noto, "Segoe UI", Arial, sans-serif;
+font-size:12px;
+font-weight:bold;
+line-height:1.2;
+display:inline-block;
+border-radius:3px;
+}
+
 a,
 p,
 span {
@@ -278,7 +297,7 @@ h2 {
 }
 
 .jumbotron {
-    background-color: #c69453;
+    background-color: transparent;
     padding-top: 0!important
 }
 
